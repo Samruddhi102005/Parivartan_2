@@ -4,43 +4,54 @@ public class PlayerController2D : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float jumpForce = 7f;
+    public float depthOffset = 0.1f;  // How much the player changes depth while moving up/down
     private Rigidbody2D rb;
     private bool isGrounded;
-    private int currentViewAngle = 0;
+
+    private SpriteRenderer spriteRenderer;  // For adjusting sorting order
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        float moveInput = Input.GetAxis("Horizontal");
+        // Get input for horizontal (left/right) and vertical (up/down) movement
+        float moveInputHorizontal = Input.GetAxis("Horizontal");
+        float moveInputVertical = Input.GetAxis("Vertical");
 
-        // Adjust movement based on camera rotation
-        switch (currentViewAngle)
+        // Move the player along the X and Y axes
+        rb.velocity = new Vector2(moveInputHorizontal * moveSpeed, rb.velocity.y);
+
+        // Handle "front/back" movement by moving on the Y-axis
+        transform.position += new Vector3(0, moveInputVertical * moveSpeed * Time.deltaTime, 0);
+
+        // Simulate depth by adjusting Z position or sorting layer based on Y-axis movement
+        if (moveInputVertical != 0)
         {
-            case 0:  // Front view
-                rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
-                break;
-            case 90:  // Right side view
-                rb.velocity = new Vector2(rb.velocity.x, moveInput * moveSpeed);  // Move up/down instead of left/right
-                break;
-            case 180:  // Back view
-                rb.velocity = new Vector2(-moveInput * moveSpeed, rb.velocity.y);
-                break;
-            case 270:  // Left side view
-                rb.velocity = new Vector2(rb.velocity.x, -moveInput * moveSpeed);  // Invert up/down movement
-                break;
+            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.y * depthOffset);
         }
 
+        // Flip sprite if moving left or right (optional)
+        if (moveInputHorizontal < 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else if (moveInputHorizontal > 0)
+        {
+            spriteRenderer.flipX = false;
+        }
+
+        // Jump logic
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
     }
 
-
+    // Check if the player is grounded to allow jumping
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
