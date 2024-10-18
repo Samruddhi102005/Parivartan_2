@@ -1,0 +1,5 @@
+# Inside .gitattributes file
+*.cs text eol=lf
+*.shader text eol=lf
+*.unity binary
+*.meta text eol=lf
