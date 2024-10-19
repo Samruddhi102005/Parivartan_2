@@ -4,6 +4,7 @@ public class CameraRotation : MonoBehaviour
 {
     public Transform player;  // Player to follow
     public float rotationSpeed = 90f;  // Rotation step in degrees
+    public Transform background;
 
     private int currentViewAngle = 0;
 
@@ -16,6 +17,8 @@ public class CameraRotation : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.E))  // Rotate right
         {
             RotateCamera(90);
+
+           
         }
     }
 
@@ -26,5 +29,13 @@ public class CameraRotation : MonoBehaviour
 
         // Rotate the camera around the player
         transform.RotateAround(player.position, Vector3.up, angle);
+
+        AlignBackgroundWithCamera();
+
+    }
+    void AlignBackgroundWithCamera()
+    {
+        // Ensure the background plane is always aligned to face the camera
+        background.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
     }
 }
