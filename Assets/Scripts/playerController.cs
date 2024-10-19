@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isPlay;
 
-    public Animator player_animator;
+    //public Animator player_animator;
 
     void Start()
     {
@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             isPlay = true;
-            player_animator.SetFloat("is running",1);
+            //player_animator.SetFloat("is running",1);
         }
         if (isPlay) {
             transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + for_speed * Time.deltaTime);
